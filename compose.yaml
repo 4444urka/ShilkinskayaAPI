@@ -1,9 +1,35 @@
 ﻿services:
-  api:
+  shilkinskaya.api:
     image: shilkinskayaapi
     build:
       context: .
       dockerfile: ShilkinskayaAPI/Dockerfile
     ports:
       - "8080:8080"
-      
+    environment:
+        ASPNETCORE_ENVIRONMENT: Development
+        ConnectionStrings__DefaultConnection: "Host=shilkinskaya.db;Port=5432;Database=shilkinskaya;Username=anton;Password=churka1488"
+    depends_on:
+        - shilkinskaya.db
+    
+  shilkinskaya.db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    volumes:
+      - shilkinskaya.db:/var/lib/postgresql/data
+    environment:
+        POSTGRES_USER: anton
+        POSTGRES_PASSWORD: churka1488
+        POSTGRES_DB: shilkinskaya
+  
+  shilkinskaya.redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - shilkinskaya.redis:/data
+        
+volumes:
+    shilkinskaya.db:
+    shilkinskaya.redis:
